@@ -1,74 +1,207 @@
 ﻿using System;
 
-
 namespace Homeworks
 {
     class Program
     {
-        /*1. Напишите на C# функцию согласно блок-схеме
-        Требуется реализовать на C# функцию согласно блок-схеме. Блок-схема описывает алгоритм проверки, простое число или нет.
-        Написать консольное приложение.
-        Алгоритм реализовать отдельно в функции согласно блок-схеме.
-        Написать проверочный код в main функции .
-        Код выложить на GitHub.
-        */
         static void Main(string[] args)
         {
-            Console.WriteLine("Введите число");
-            int n = int.Parse(Console.ReadLine());
-            EasyOrHard(n);
+            Console.WriteLine("Задача 2. Требуется реализовать класс двусвязного списка и операции вставки, удаления и поиска элемента в нём в соответствии с интерфейсом.");
+
+            NodeList list = new NodeList();
+
+            list.AddNode(1);
+            list.AddNode(2);
+            list.AddNode(3);
+            list.AddNode(4);
+            list.AddNode(5);
+            list.AddNode(6);
+            //list.AddNodeAfter(list.FindNode(5), 400);
+            Console.WriteLine(list);
+
+            list.RemoveNode(5);
+            Console.WriteLine(list);
         }
 
-        private static string EasyOrHard(int n)
+
+    }
+
+    public class Node
+    {
+        public int Value { get; set; }
+        public Node NextNode { get; set; }
+        public Node PrevNode { get; set; }
+    }
+
+    //Начальную и конечную ноду нужно хранить в самой реализации интерфейса
+    public interface ILinkedList
+    {
+        int GetCount(); // возвращает количество элементов в списке
+        void AddNode(int value);  // добавляет новый элемент списка
+        void AddNodeAfter(Node node, int value); // добавляет новый элемент списка после определённого элемента
+        void RemoveNode(int index); // удаляет элемент по порядковому номеру
+        void RemoveNode(Node node); // удаляет указанный элемент
+        Node FindNode(int searchValue); // ищет элемент по его значению
+    }
+
+    class NodeList : ILinkedList
+    {
+        private int count;
+
+        Node head;
+        Node tail;
+
+        public void AddNode(int value)
         {
-            int d = 0;
-            int i = 2;
-
-            while (i < n)
+            Node newNode = new Node() { Value = value };
+            if (head == null)
+                head = newNode;
+            else
             {
-                if ((n % i) == 0)
+                Node node = head;
+                while (node.NextNode != null)
                 {
-                    d++;
+                    node = node.NextNode;
                 }
-                i++;
-            }
 
-            if (d == 0)
+                node.NextNode = newNode;
+                newNode.PrevNode = node;
+
+                tail = newNode;
+            }
+            count++;
+        }
+
+        public void AddNodeAfter(Node node, int value)
+        {
+            if (node == tail)
             {
-                Console.WriteLine($"{n} простое число");
-                return "простое";
+                // если нужно вставить новый node после последнего, то воспользуемся готовым методом
+                AddNode(value);
             }
             else
             {
-                Console.WriteLine($"{n} непростое число");
-                return "не простое";
-            }
-        }
-    }
-}
-
-
-/*
-2. Посчитайте сложность функции
-public static int  StrangeSum(int[] inputArray)
-{
-    int sum = 0; //O(1)
-    for (int i = 0; i < inputArray.Length; i++) //О(N)
-    {
-        for (int j = 0; j < inputArray.Length; j++) //О(N)
-        {
-            for (int k = 0; k < inputArray.Length; k++) //О(N)
-            {
-                int y = 0; //O(1)
-                if (j != 0) // O(N + 1)
+                Node newNode = new Node() { Value = value };
+                Node tmp = head;
+                while (tmp != null)
                 {
-                    y = k / j; //O(2)
+                    if (tmp.NextNode == node)
+                    {
+                        count++;
+                        // Встраивание нового node в список
+                        newNode.NextNode = node.NextNode;
+                        newNode.PrevNode = node;
+                        node.NextNode.PrevNode = newNode;
+                        node.NextNode = newNode;
+                        break;
+                    }
+
+                    tmp = tmp.NextNode;
                 }
-                sum += inputArray[i] + i + k + j + y; //O(5)
+            }
+        }
+
+        public Node FindNode(int searchValue)
+        {
+            Node node = head;
+            while (true)
+            {
+                if (node.Value == searchValue) return node;
+
+                if (node.NextNode == null) break;
+                node = node.NextNode;
+
+            }
+
+            return null;
+        }
+
+        public int GetCount() => count;
+
+
+        public void RemoveNode(int index)
+        {
+            if (index >= 0 && index < count)
+            {
+                int i = 0;
+                Node node = head;
+
+                do
+                {
+                    if (index == i)
+                    {
+                        RemoveNode(node);
+                        break;
+                    }
+                    else
+                    {
+                        i++;
+                        node = node.NextNode;
+                    }
+                }
+                while (node != tail);
+            }
+        }
+
+        public void RemoveNode(Node node)
+        {
+            if (node == tail)
+            {
+                tail = node.PrevNode;
+                tail.NextNode = null;
+            }
+            else
+            {
+                node.PrevNode.NextNode = node.NextNode;
+                node.NextNode.PrevNode = node.PrevNode;
+            }
+            count--;
+        }
+
+        public override string ToString()
+        {
+            if (head != null)
+            {
+                Node node = head;
+                string result = "Nodes: ";
+                do
+                {
+                    result += $"{node.Value} ";
+                    node = node.NextNode;
+                }
+                while (node != tail);
+                return result;
+            }
+            else return "Пустой список";
+        }
+
+        public Node this[int index]
+        {
+            get
+            {
+                if (index >= 0 && index < count)
+                {
+                    int i = 0;
+                    Node node = head;
+
+                    while (true)
+                    {
+                        if (i >= count || node == null) break;
+
+                        if (index == i) return node;
+                        else
+                        {
+                            i++;
+                            node = node.NextNode;
+                        }
+
+
+                    }
+
+                }
+
+                return null;
             }
         }
     }
-    return sum; //O(1)
 }
-Сложность: 9 + (N+1) + N^3
-*/
