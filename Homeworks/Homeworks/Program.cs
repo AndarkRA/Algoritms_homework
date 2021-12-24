@@ -1,49 +1,39 @@
 ﻿using System;
-using HW4_2;
+using HW5_1;
 using System.Collections;
 
-namespace HW4_2
+namespace HW5_1
 {
-    /*
-     *Реализуйте класс двоичного дерева поиска с операциями вставки, удаления, поиска. 
-     *Дерево должно быть сбалансированным. 
-     *Также напишите метод вывода в консоль дерева, чтобы увидеть, насколько корректно работает ваша реализация.  
-    */
 
     class Program
     {
         static void Main(string[] args)
         {
-            BinaryTree MyTree = new BinaryTree();
+            TreeNode myTree = new TreeNode();
 
 
-            MyTree.Insert(55);
-            MyTree.Insert(19);
-            MyTree.Insert(36);
-            MyTree.Insert(48);
-            MyTree.Insert(51);
-            MyTree.Insert(15);
-            MyTree.Insert(98);
-            MyTree.Insert(42);
-            MyTree.Insert(16);
-            MyTree.Insert(44);
-            MyTree.Insert(30);
-            MyTree.Insert(9);
+            myTree.add(55);
+            myTree.add(19);
+            myTree.add(36);
+            myTree.add(48);
+            myTree.add(51);
+            myTree.add(15);
+            myTree.add(98);
+            myTree.add(42);
+            myTree.add(16);
+            myTree.add(44);
+            myTree.add(30);
+            myTree.add(9);
 
 
 
 
 
-            MyTree.Print(MyTree);
+            myTree.printTreeBFS();
+            Console.WriteLine();
 
-
-            Console.WriteLine("============ Удаляем 48 ==========");
-            MyTree.Delete(48);
-            MyTree.Print(MyTree);
-
-            Console.WriteLine("============ Вращаем влево 19 ноду ==========");
-            MyTree.rotateRight(19);
-            MyTree.Print(MyTree);
+            myTree.printTreeDFS();
+            Console.WriteLine();
         }
     }
 }
